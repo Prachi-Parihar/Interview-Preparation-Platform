@@ -197,6 +197,8 @@ Configure your own credentials for the database, AI provider, Firebase, Redis, a
 
 **Never commit API keys, private credentials, service account files, or production secrets to GitHub.**
 
+For local authentication, configure `FRONTEND_URL` as the exact browser origin (normally `http://localhost:5173`) and use the same `REDIS_URL` in the Gateway and Auth Service. The local HTTP session cookie is HTTP-only, uses `SameSite=Lax`, and does not require `Secure`; keep the frontend and API host consistent (`localhost`, not a mix of `localhost` and `127.0.0.1`).
+
 ### 5. Start the Application
 
 Start the required backend services using the development commands defined in their respective `package.json` files. Start MongoDB and Redis if required by your configuration.

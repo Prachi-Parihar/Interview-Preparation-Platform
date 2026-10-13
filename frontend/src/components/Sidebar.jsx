@@ -16,6 +16,7 @@ import {
   FiStar,
 } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
+
 function Sidebar({
   user,
   onNewInterview,
@@ -23,7 +24,7 @@ function Sidebar({
   sidebarOpen,
   setSidebarOpen,
   mobileOpen,
-  setMobileOpen
+  setMobileOpen,
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,86 +32,76 @@ function Sidebar({
   const navItems = [
     { label: "Overview", icon: <FiHome size={17} />, path: "/dashboard" },
     { label: "Interviews", icon: <FiMic size={17} />, path: "/interview" },
-    {
-      label: "Resume Builder",
-      icon: <FiFileText size={17} />,
-      path: "/resume",
-    },
-    {
-      label: "Roadmap Builder",
-      icon: <FiMap size={17} />,
-      path: "/roadmap",
-    },
-    {
-      label: "Resume Scorer",
-      icon: <FiStar size={17} />,
-      path: "/scorer",
-    },
+    { label: "Resume Builder", icon: <FiFileText size={17} />, path: "/resume" },
+    { label: "Roadmap Builder", icon: <FiMap size={17} />, path: "/roadmap" },
+    { label: "Resume Scorer", icon: <FiStar size={17} />, path: "/scorer" },
   ];
+
+  const handleLogoutClick = () => {
+    if (typeof onLogout === "function") {
+      onLogout();
+    } else {
+      console.error("onLogout function is not passed to Sidebar");
+    }
+  };
 
   const inner = (expanded, isMobile = false) => (
     <div className="flex h-full min-h-0 flex-col">
-     
-{/* Sidebar Header */}
-<div
-  className={`flex h-[52px] shrink-0 items-center border-b border-black/10 ${
-    expanded
-      ? "justify-between px-3"
-      : "justify-center px-0"
-  }`}
->
-  <button
-    type="button"
-    onClick={() => navigate("/dashboard")}
-    className={`flex shrink-0 items-center overflow-hidden text-left ${
-      expanded ? "gap-3" : "justify-center"
-    }`}
-    aria-label="Go to InterviewAI dashboard"
-  >
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black text-white">
-      <FaMicrophone className="h-4 w-4 shrink-0" />
-    </div>
+      <div
+        className={`flex h-[52px] shrink-0 items-center border-b border-black/10 ${
+          expanded ? "justify-between px-3" : "justify-center px-0"
+        }`}
+      >
+        <button
+          type="button"
+          onClick={() => navigate("/dashboard")}
+          className={`flex shrink-0 items-center overflow-hidden text-left ${
+            expanded ? "gap-3" : "justify-center"
+          }`}
+          aria-label="Go to InterviewAI dashboard"
+        >
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black text-white">
+            <FaMicrophone className="h-4 w-4" />
+          </div>
 
-    {expanded && (
-      <div className="whitespace-nowrap">
-        <h1 className="font-bold tracking-tight text-gray-900">
-          Interview<span className="text-[#ab2552]">AI</span>
-        </h1>
+          {expanded && (
+            <div className="whitespace-nowrap">
+              <h1 className="font-bold tracking-tight text-gray-900">
+                Interview<span className="text-[#ab2552]">AI</span>
+              </h1>
+              <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-gray-400">
+                Interview Prep
+              </p>
+            </div>
+          )}
+        </button>
 
-        <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-gray-400">
-          Interview Prep
-        </p>
+        {!isMobile && (
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setSidebarOpen((prev) => !prev)}
+            title={expanded ? "Collapse sidebar" : "Expand sidebar"}
+            aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+            className="hidden shrink-0 rounded-lg p-1 text-black/50 transition-colors hover:bg-gray-100 hover:text-black md:flex"
+          >
+            <FiSidebar size={18} />
+          </motion.button>
+        )}
+
+        {isMobile && (
+          <button
+            type="button"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close sidebar"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600"
+          >
+            <FaTimes size={18} />
+          </button>
+        )}
       </div>
-    )}
-  </button>
 
-  {!isMobile && (
-    <motion.button
-      type="button"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      onClick={() => setSidebarOpen((prev) => !prev)}
-      title={expanded ? "Collapse sidebar" : "Expand sidebar"}
-      aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
-      className="hidden shrink-0 rounded-lg p-1 text-black/50 transition-colors hover:bg-gray-100 hover:text-black md:flex"
-    >
-      <FiSidebar size={18} />
-    </motion.button>
-  )}
-
-  {isMobile && (
-    <button
-      type="button"
-      onClick={() => setMobileOpen(false)}
-      aria-label="Close sidebar"
-      className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600"
-    >
-      <FaTimes size={18} />
-    </button>
-  )}
-</div>
-
-      {/* Create Interview */}
       <div className="shrink-0 px-3 pt-6">
         <motion.button
           type="button"
@@ -126,13 +117,11 @@ function Sidebar({
             if (isMobile) setMobileOpen(false);
           }}
           title={!expanded ? "Create Interview" : undefined}
-          aria-label="Create Interview"
           className={`flex w-full items-center gap-2 rounded-xl bg-[#1b2029] py-3 text-sm font-semibold text-white transition hover:bg-[#ab2552] ${
             expanded ? "justify-center px-2.5" : "justify-center px-0"
           }`}
         >
           <FaPlus className="h-3 w-3 shrink-0" />
-
           {expanded && (
             <span className="whitespace-nowrap text-xs">
               Create Interview
@@ -141,7 +130,6 @@ function Sidebar({
         </motion.button>
       </div>
 
-      {/* Navigation */}
       <nav className="mt-6 flex flex-col gap-2 px-3">
         {navItems.map((item) => {
           const active = location.pathname === item.path;
@@ -180,8 +168,6 @@ function Sidebar({
         })}
       </nav>
 
-
-      {/* User Profile */}
       <div className="mt-auto shrink-0 border-t border-black/5 p-3">
         <div
           className={`mb-3 flex items-center gap-3 rounded-xl bg-[#F5F5F3] p-2 ${
@@ -205,11 +191,10 @@ function Sidebar({
           )}
         </div>
 
-        {/* Logout */}
         <motion.button
           type="button"
           whileTap={{ scale: 0.97 }}
-          onClick={onLogout}
+          onClick={handleLogoutClick}
           title={!expanded ? "Logout" : undefined}
           aria-label="Logout"
           className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-500 transition hover:bg-red-50 hover:text-red-600 ${
@@ -217,7 +202,6 @@ function Sidebar({
           }`}
         >
           <FaSignOutAlt size={15} className="shrink-0" />
-
           {expanded && <span className="font-medium">Logout</span>}
         </motion.button>
       </div>
@@ -226,7 +210,6 @@ function Sidebar({
 
   return (
     <>
-      {/* Mobile Overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -239,7 +222,6 @@ function Sidebar({
         )}
       </AnimatePresence>
 
-      {/* Desktop Sidebar */}
       <motion.aside
         initial={false}
         animate={{ width: sidebarOpen ? 260 : 72 }}
@@ -249,7 +231,6 @@ function Sidebar({
         {inner(sidebarOpen)}
       </motion.aside>
 
-      {/* Mobile Sidebar */}
       <motion.aside
         initial={false}
         animate={{ x: mobileOpen ? 0 : "-100%" }}

@@ -1,17 +1,10 @@
+
 node_modules/
 .env
 .env.*
 !.env.example
 dist/
-
-# Environment variables
-.env
-.env.*
-!.env.example
-
-# Dependencies
-node_modules/
-dist/
-
-# Firebase service account credentials
 serviceAccountKey.json
+coverage/
+*.log
+.DS_Store

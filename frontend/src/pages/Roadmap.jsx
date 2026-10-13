@@ -363,7 +363,7 @@ function Roadmap() {
                         await getRoadmapById(item._id);
                         setHistoryOpen(false);
                       }}
-                      className="w-full rounded-xl border border-gray-200 bg-white p-4 text-left transition hover:border-gray-400 hover:bg-gray-50"
+                      className="w-full rounded-xl border border-gray-200 bg-white p-2 text-left transition hover:border-gray-400 hover:bg-gray-50"
                     >
                       <h3 className="text-sm font-semibold text-gray-900">
                         {item.title || "Learning Roadmap"}

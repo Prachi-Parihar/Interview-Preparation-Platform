@@ -2,16 +2,17 @@
 import React from "react";
 import { motion } from "motion/react";
 import { FaArrowRight, FaCheck, FaMicrophone } from "react-icons/fa";
+import interviewImg from "../../assets/interview.jpg";
 
 const HomeHero = ({ onLogin }) => {
   return (
     <section
       id="home"
-      className="relative px-5 pb-20 pt-32 sm:px-8 sm:pb-28"
+      className="relative px-5 pb-20 pt-25 sm:px-8 sm:pb-28"
     >
-      <div className="absolute right-0 top-24 -z-0 h-72 w-72 rounded-full" />
+      <div className="absolute right-0 top-24 -z-0 h-10 w-72 rounded-full" />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
         <div>
           <motion.span
             initial={{ opacity: 0, y: 12 }}
@@ -26,7 +27,7 @@ const HomeHero = ({ onLogin }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mt-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl"
+            className="mt-4 text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl"
           >
             Build Confidence
             <br />
@@ -73,49 +74,47 @@ const HomeHero = ({ onLogin }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-3xl border border-black/10 bg-[#F5F5F5] p-5"
+          className="overflow-hidden rounded-3xl border border-black/10 bg-[#F5F5F5] p-4 sm:p-5"
         >
-          <div className="flex items-center justify-between border-b border-black/10 pb-5">
+          <div className="flex items-center justify-between border-b border-black/10 pb-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-white">
                 <FaMicrophone />
               </div>
+
               <div>
                 <h3 className="font-semibold">Practice Session</h3>
-                <p className="text-xs text-gray-500">Technical Interview</p>
+                <p className="text-xs text-gray-500">
+                  Technical Interview
+                </p>
               </div>
             </div>
+
             <span className="rounded-full bg-green-100 px-3 py-1 text-xs text-green-700">
               Demo
             </span>
           </div>
 
-          <div className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Interviewer asks
-            </p>
-            <p className="mt-3 leading-6">
-              How would you improve the performance of a slow web application?
-            </p>
+          <div className="mt-5 overflow-hidden rounded-2xl bg-white">
+            <img
+              src={interviewImg}
+              alt="AI Interview Practice Session"
+              className="h-64 w-full object-cover sm:h-80"
+            />
           </div>
 
-          <div className="ml-5 mt-4 rounded-2xl bg-black p-5 text-sm leading-6 text-white sm:ml-12">
-            I would first identify the bottleneck, check network requests,
-            optimize rendering and reduce unnecessary API calls.
-          </div>
-
-          <div className="mt-4 rounded-2xl border border-pink-100 bg-white p-5">
+          <div className="mt-4 rounded-2xl border border-pink-100 bg-white p-4 sm:p-5">
             <p className="text-sm font-semibold text-[#ab2552]">
-              Feedback Preview
+              AI-Powered Interview
             </p>
             <p className="mt-2 text-sm leading-6 text-gray-600">
-              A clear answer. Add a practical example and explain how you
-              would measure the improvement.
+              Practice real interview questions, improve your answers
+              and build confidence for your next opportunity.
             </p>
           </div>
 
-          <p className="mt-5 text-center text-xs text-gray-400">
-            Sample interface for demonstration
+          <p className="mt-4 text-center text-xs text-gray-400">
+            Your personal AI interview practice space
           </p>
         </motion.div>
       </div>

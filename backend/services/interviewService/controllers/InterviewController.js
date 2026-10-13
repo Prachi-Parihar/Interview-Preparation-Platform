@@ -102,6 +102,13 @@ export const submitAnswer = async (req, res) => {
         const index = currentInterview.currentQuestion;
         const currentQuestion = currentInterview.questions[index];
 
+        if (!answer || !answer.trim()) {
+    return res.status(400).json({
+        success: false,
+        message: "Please answer the current question before continuing",
+    });
+}
+
         if (!currentQuestion) {
             return res.status(400).json({
                 success: false,
@@ -112,7 +119,7 @@ export const submitAnswer = async (req, res) => {
         currentQuestion.userAnswer = answer;
 
         const completed =
-            index + 1 >= currentInterview.questions.length;
+    index === currentInterview.questions.length - 1;
 
         const result = await graph.invoke({
             action: "feedback",
@@ -218,15 +225,27 @@ export const getAllInterviews = async (req, res) => {
         const interviews = await Interview.find({ userId }).sort({
             createdAt: -1,
         });
+const completed = interviews.filter(
+  (item) =>
+    item.status === "completed" &&
+    item.questions?.length > 0 &&
+    item.questions.every(
+      (question) =>
+        typeof question.userAnswer === "string" &&
+        question.userAnswer.trim().length > 0
+    )
+);
 
-        const completed = interviews.filter(
-            (item) => item.status === "completed"
-        );
-
-        const totalQuestions = interviews.reduce(
-            (sum, item) => sum + item.questions.length,
-            0
-        );
+     const totalQuestions = interviews.reduce(
+  (sum, item) =>
+    sum +
+    (item.questions || []).filter(
+      (question) =>
+        typeof question.userAnswer === "string" &&
+        question.userAnswer.trim().length > 0
+    ).length,
+  0
+);
 
         const averageScore =
             completed.length > 0
@@ -239,7 +258,7 @@ export const getAllInterviews = async (req, res) => {
                 : 0;
 
         const stats = {
-            totalInterview: interviews.length,
+            totalInterviews: interviews.length,
             totalQuestions,
             completed: completed.length,
             averageScore: Number(averageScore),

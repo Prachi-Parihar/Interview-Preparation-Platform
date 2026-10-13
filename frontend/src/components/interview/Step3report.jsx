@@ -15,6 +15,15 @@ function Step3report({ report, user }) {
   const navigate = useNavigate();
 
   const data = report || {};
+  const isCompleted =
+    data.status === "completed" &&
+    Array.isArray(data.questions) &&
+    data.questions.length > 0 &&
+    data.questions.every(
+      (question) =>
+        typeof question.userAnswer === "string" &&
+        question.userAnswer.trim().length > 0
+    );
   const questions = Array.isArray(data.questions) ? data.questions : [];
   const strengths = Array.isArray(data.strengths) ? data.strengths : [];
   const weaknesses = Array.isArray(data.weaknesses) ? data.weaknesses : [];
@@ -88,11 +97,13 @@ function Step3report({ report, user }) {
             <div className="flex w-fit items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-3 py-2">
               <FiAward size={18} className="text-green-700" />
               <div>
-                <p className="text-sm font-semibold text-green-800">
-                  Completed
+                <p className="text-sm font-semibold text-gray-800">
+                  {isCompleted ? "Completed" : "Incomplete"}
                 </p>
-                <p className="text-xs text-green-700">
-                  Interview report
+                <p className="text-xs text-gray-600">
+                  {isCompleted
+                    ? "Interview report"
+                    : "All questions have not been answered"}
                 </p>
               </div>
             </div>
@@ -353,8 +364,8 @@ function Step3report({ report, user }) {
                               {typeof feedback === "string"
                                 ? feedback
                                 : feedback.feedback ||
-                                  feedback.comment ||
-                                  "No feedback available."}
+                                feedback.comment ||
+                                "No feedback available."}
                             </p>
                           </div>
 
@@ -374,8 +385,8 @@ function Step3report({ report, user }) {
                                         {typeof improvement === "string"
                                           ? improvement
                                           : improvement?.description ||
-                                            improvement?.text ||
-                                            ""}
+                                          improvement?.text ||
+                                          ""}
                                       </li>
                                     )
                                   )}
@@ -418,3 +429,4 @@ function Step3report({ report, user }) {
 }
 
 export default Step3report;
+

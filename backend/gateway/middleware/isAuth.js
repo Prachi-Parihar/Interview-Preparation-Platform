@@ -1,12 +1,13 @@
+
 import redis from "../../shared/redis/redis.js";
 
 export const isAuth = async (req, res, next) => {
   try {
-    const sessionId = req.cookies.sessionId;
+    const sessionId = req.cookies?.sessionId;
 
     if (!sessionId) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: "Login required. Session cookie is missing.",
       });
     }
 
@@ -14,18 +15,26 @@ export const isAuth = async (req, res, next) => {
 
     if (!session) {
       return res.status(401).json({
-        message: "Session Expired",
+        message: "Session not found or expired. Please login again.",
       });
     }
 
-    req.user = JSON.parse(session);
+    try {
+      req.user = JSON.parse(session);
+    } catch {
+      console.error("Invalid session data in Redis");
 
-    next();
+      return res.status(401).json({
+        message: "Invalid session. Please login again.",
+      });
+    }
+
+    return next();
   } catch (error) {
     console.error("Auth Middleware Error:", error);
 
     return res.status(500).json({
-      message: error.message,
+      message: "Authentication service error",
     });
   }
 };

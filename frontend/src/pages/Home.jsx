@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { MotionConfig } from "motion/react";
 import LoginModel from "../components/LoginModel";

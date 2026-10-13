@@ -6,8 +6,8 @@ import fs from "fs";
 
 
 export const uploadResume = async (req,res) => {
+    const file = req.file;
     try {
-        const file = req.file;
         if(!file){
             return res.status(400).json({
                 success:false,
@@ -77,20 +77,20 @@ export const getResume = async (req,res) => {
             data: JSON.parse(cache)
         })
     }
-    const resume = await resume.findOne(userId);
-    if(!resume){
+    const resumeRecord = await Resume.findOne({ userId });
+    if(!resumeRecord){
         return res.status(404).json({
             success: false,
             message: "Resume is not Found"
         })
     }
 
-    await redis.set(`resume: ${userId}`, JSON.stringify(resume));
+    await redis.set(`resume: ${userId}`, JSON.stringify(resumeRecord));
 
     return res.status(200).json({
             success: true,
             source: "mongoDB",
-            data: resume
+            data: resumeRecord
         })
     }catch(error){
         console.log(error);

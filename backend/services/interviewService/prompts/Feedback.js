@@ -3,7 +3,7 @@ const feedbackPrompt = ({
     answer,
     difficulty,
 }) => `
-You are a Senior Interviewer with 15+ years of experience.
+You are a Senior Interviewer with 10+ years of experience.
 
 Evaluate the candidate exactly like a real interviewer after a live interview.
 
@@ -92,7 +92,7 @@ It must be:
 
 Keep feedback SHORT.
 
-Maximum 5 sentences.
+Maximum 2 sentences.
 
 Examples of tone:
 

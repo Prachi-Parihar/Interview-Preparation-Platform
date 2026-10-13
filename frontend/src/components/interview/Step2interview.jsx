@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import maleVideo from "../../assets/male-ai.mp4";
-import femaleVideo from "../../assets/female-ai.mp4";
+import interviewImage from "../../assets/interview.jpg";
 import { AnimatePresence, motion } from "motion/react";
 import {
   FiArrowRight,
@@ -21,7 +20,9 @@ import { useNavigate } from "react-router-dom";
 function Step2interview({ interviewData, user }) {
   const navigate = useNavigate();
 
-  const [question, setQuestion] = useState(interviewData?.question || {});
+  const [question, setQuestion] = useState(
+    interviewData?.question || {}
+  );
   const [currentIndex, setCurrentIndex] = useState(
     interviewData?.currentQuestion ?? 0
   );
@@ -41,7 +42,6 @@ function Step2interview({ interviewData, user }) {
   const [voiceReady, setVoiceReady] = useState(false);
   const [interviewStarted, setInterviewStarted] = useState(false);
 
-  const aiVideoRef = useRef(null);
   const userVideoRef = useRef(null);
   const recognitionRef = useRef(null);
   const streamRef = useRef(null);
@@ -51,18 +51,15 @@ function Step2interview({ interviewData, user }) {
   const speechIdRef = useRef(0);
   const previousQuestionRef = useRef(null);
   const interviewStartedRef = useRef(false);
+  const timeoutHandledRef = useRef(false);
+  const submitRef = useRef(null);
 
   const totalQuestions = interviewData?.totalQuestions || 1;
+
   const progress = Math.min(
     ((currentIndex + 1) / totalQuestions) * 100,
     100
   );
-
-  const videoSource = selectedVoice
-    ? /zira|samantha|female/i.test(selectedVoice.name)
-      ? femaleVideo
-      : maleVideo
-    : femaleVideo;
 
   const firstName = user?.name?.split(" ")[0] || "User";
 
@@ -71,12 +68,15 @@ function Step2interview({ interviewData, user }) {
     setAnswer(value);
   };
 
-  // Load available voices
   useEffect(() => {
-    if (!("speechSynthesis" in window)) return;
+    if (!("speechSynthesis" in window)) {
+      setVoiceReady(true);
+      return;
+    }
 
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices();
+
       if (!voices.length) return;
 
       const preferred =
@@ -103,7 +103,6 @@ function Step2interview({ interviewData, user }) {
     };
   }, []);
 
-  // AI speech
   const speakText = (text) =>
     new Promise((resolve) => {
       if (!text?.trim() || !("speechSynthesis" in window)) {
@@ -135,7 +134,6 @@ function Step2interview({ interviewData, user }) {
           return;
         }
 
-        aiVideoRef.current?.pause();
         setIsAIPlaying(false);
         setSubtitle("");
         resolve();
@@ -146,10 +144,6 @@ function Step2interview({ interviewData, user }) {
 
         setIsAIPlaying(true);
         setSubtitle(text);
-
-        aiVideoRef.current?.play().catch((error) => {
-          console.warn("AI video could not autoplay:", error);
-        });
       };
 
       utterance.onend = finishSpeech;
@@ -159,7 +153,6 @@ function Step2interview({ interviewData, user }) {
       synth.speak(utterance);
     });
 
-  // Start interview
   const startInterview = async () => {
     if (interviewStartedRef.current) return;
 
@@ -176,7 +169,6 @@ function Step2interview({ interviewData, user }) {
     }
   };
 
-  // Speech recognition
   useEffect(() => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -277,7 +269,6 @@ function Step2interview({ interviewData, user }) {
     }
   };
 
-  // Camera
   const toggleCamera = async () => {
     if (cameraOn) {
       streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -310,7 +301,6 @@ function Step2interview({ interviewData, user }) {
     }
   }, [cameraOn]);
 
-  // Cleanup
   useEffect(() => {
     return () => {
       streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -319,7 +309,6 @@ function Step2interview({ interviewData, user }) {
     };
   }, []);
 
-  // Sync question
   useEffect(() => {
     setQuestion(interviewData?.question || {});
     setCurrentIndex(interviewData?.currentQuestion ?? 0);
@@ -327,9 +316,9 @@ function Step2interview({ interviewData, user }) {
 
   useEffect(() => {
     setTimeLeft(question?.timer || 60);
+    timeoutHandledRef.current = false;
   }, [question]);
 
-  // Speak new question
   useEffect(() => {
     if (!interviewStarted || !question?.question) return;
     if (previousQuestionRef.current === question) return;
@@ -338,7 +327,6 @@ function Step2interview({ interviewData, user }) {
     speakText(question.question);
   }, [question, interviewStarted]);
 
-  // Timer
   useEffect(() => {
     if (!interviewStarted || loading || timeLeft <= 0) return;
 
@@ -349,14 +337,22 @@ function Step2interview({ interviewData, user }) {
     return () => clearInterval(timer);
   }, [timeLeft, loading, interviewStarted]);
 
-  // Submit answer
   const submit = async (isTimeout = false) => {
     if (submittingRef.current || loading) return;
 
     const finalAnswer = answerRef.current.trim();
 
-    if (!isTimeout && !finalAnswer) {
-      alert("Please enter or speak your answer first.");
+    if (!finalAnswer) {
+      if (isTimeout) {
+        timeoutHandledRef.current = true;
+        setTimeLeft(0);
+        alert(
+          "Time is over. Please enter an answer before submitting, or leave the interview and resume it later."
+        );
+      } else {
+        alert("Please enter or speak your answer first.");
+      }
+
       return;
     }
 
@@ -367,12 +363,18 @@ function Step2interview({ interviewData, user }) {
     try {
       const response = await submitAnswer({
         interviewId: interviewData?.interviewId,
-        answer: finalAnswer || "No answer provided. Time over.",
+        answer: finalAnswer,
       });
+
+      if (!response?.success) {
+        throw new Error(
+          response?.message || "Answer could not be submitted."
+        );
+      }
 
       setFeedback(response?.feedback || null);
 
-      if (response?.completed) {
+      if (response?.completed === true) {
         await speakText(
           response?.feedback?.feedback ||
             "Your interview is complete. Preparing your report."
@@ -396,6 +398,7 @@ function Step2interview({ interviewData, user }) {
       setCurrentIndex(response.currentQuestion ?? currentIndex + 1);
       updateAnswer("");
       setFeedback(null);
+      timeoutHandledRef.current = false;
     } catch (error) {
       console.error("Submit answer error:", error);
 
@@ -410,20 +413,33 @@ function Step2interview({ interviewData, user }) {
     }
   };
 
-  // Auto-submit when timer ends
-  const submitRef = useRef(submit);
   submitRef.current = submit;
 
   useEffect(() => {
     if (
-      interviewStarted &&
-      timeLeft === 0 &&
-      !loading &&
-      !submittingRef.current
+      !interviewStarted ||
+      timeLeft !== 0 ||
+      loading ||
+      submittingRef.current ||
+      timeoutHandledRef.current
     ) {
+      return;
+    }
+
+    timeoutHandledRef.current = true;
+
+    if (answerRef.current.trim()) {
       submitRef.current(true);
+    } else {
+      alert("Time is over. Please provide an answer before continuing.");
     }
   }, [timeLeft, loading, interviewStarted]);
+
+  const handleBack = () => {
+    stopMic();
+    window.speechSynthesis?.cancel();
+    navigate("/dashboard");
+  };
 
   const handleSubmitCode = (code) => {
     const separator = answerRef.current.trim()
@@ -436,14 +452,9 @@ function Step2interview({ interviewData, user }) {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      {/* Compact Navbar */}
       <nav className="sticky top-0 z-30 border-b border-gray-200 bg-white">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-          <button
-            type="button"
-            onClick={() => navigate("/dashboard")}
-            className="text-left"
-          >
+          <button type="button" onClick={handleBack} className="text-left">
             <h1 className="text-base font-bold tracking-tight text-gray-900">
               Interview<span className="text-[#ab2552]">AI</span>
             </h1>
@@ -472,26 +483,12 @@ function Step2interview({ interviewData, user }) {
           transition={{ duration: 0.25 }}
           className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm lg:grid-cols-[0.78fr_1.22fr]"
         >
-          {/* Left panel */}
           <div className="flex flex-col gap-4 border-b border-gray-200 bg-gray-50 p-4 sm:p-5 lg:border-b-0 lg:border-r">
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">
-                AI Interview
-              </h2>
-              <p className="mt-1 text-xs text-gray-500">
-                Practice with your AI interviewer
-              </p>
-            </div>
 
-            {/* AI Video */}
             <div className="relative aspect-video overflow-hidden rounded-xl border border-gray-200 bg-gray-900">
-              <video
-                ref={aiVideoRef}
-                src={videoSource}
-                muted
-                playsInline
-                preload="auto"
-                loop
+              <img
+                src={interviewImage}
+                alt="AI Interviewer"
                 className="h-full w-full object-cover"
               />
 
@@ -507,25 +504,6 @@ function Step2interview({ interviewData, user }) {
               )}
             </div>
 
-            {/* Subtitles */}
-            <div className="min-h-10">
-              <AnimatePresence mode="wait">
-                {subtitle && (
-                  <motion.div
-                    key={subtitle}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="rounded-xl border border-gray-200 bg-white p-3"
-                  >
-                    <p className="text-center text-xs leading-5 text-gray-600">
-                      {subtitle}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
             {!interviewStarted && (
               <button
                 type="button"
@@ -538,7 +516,6 @@ function Step2interview({ interviewData, user }) {
               </button>
             )}
 
-            {/* User Camera */}
             <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white">
               {cameraOn ? (
                 <video
@@ -567,11 +544,7 @@ function Step2interview({ interviewData, user }) {
               </div>
             </div>
 
-            {/* Interview Controls */}
             <div className="rounded-xl border border-gray-200 bg-white p-3">
-              <p className="mb-3 text-center text-xs font-medium text-gray-500">
-                Interview Controls
-              </p>
 
               <div className="flex items-center justify-center gap-3">
                 <button
@@ -620,17 +593,9 @@ function Step2interview({ interviewData, user }) {
                   : "Use the mic button to speak your answer"}
               </p>
             </div>
-
-            <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white p-3">
-              <FiCheckCircle size={17} className="shrink-0 text-green-600" />
-              <p className="text-xs leading-5 text-gray-500">
-                Your answers are submitted for AI feedback.
-              </p>
-            </div>
           </div>
 
-          {/* Right panel */}
-          <div className="flex min-w-0 flex-col p-4 sm:p-5">
+          <div className="flex min-w-0 flex-col p-2 sm:p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
@@ -657,8 +622,7 @@ function Step2interview({ interviewData, user }) {
               </div>
             </div>
 
-            {/* Progress */}
-            <div className="mt-5">
+            <div className="mt-2">
               <div className="mb-2 flex items-center justify-between text-xs">
                 <span className="font-medium text-gray-600">
                   Interview Progress
@@ -677,12 +641,11 @@ function Step2interview({ interviewData, user }) {
               </div>
             </div>
 
-            {/* Question */}
             <motion.div
               key={currentIndex}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-5 rounded-xl border border-gray-200 bg-gray-50 p-4"
+              className="mt-2 rounded-xl border border-gray-200 bg-gray-50 p-2"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white">
@@ -704,8 +667,7 @@ function Step2interview({ interviewData, user }) {
               </p>
             </motion.div>
 
-            {/* Answer */}
-            <div className="mt-5 flex flex-1 flex-col">
+            <div className="mt-2 flex flex-1 flex-col">
               <div className="mb-2 flex items-center justify-between gap-3">
                 <label
                   htmlFor="interviewAnswer"
@@ -734,7 +696,7 @@ function Step2interview({ interviewData, user }) {
                 }}
                 rows={6}
                 placeholder="Type your answer here or use the microphone to speak..."
-                className="min-h-36 w-full flex-1 resize-y rounded-xl border border-gray-200 bg-white p-4 text-sm leading-6 text-gray-800 outline-none placeholder:text-gray-400 focus:border-gray-500 focus:ring-2 focus:ring-gray-100"
+                className="min-h-36 w-full flex-1 resize-y rounded-xl border border-gray-200 bg-white p-3 text-sm leading-6 text-gray-800 outline-none placeholder:text-gray-400 focus:border-gray-500 focus:ring-2 focus:ring-gray-100"
               />
 
               <p className="mt-2 text-xs text-gray-400">
@@ -742,7 +704,6 @@ function Step2interview({ interviewData, user }) {
               </p>
             </div>
 
-            {/* Feedback */}
             <AnimatePresence>
               {feedback && (
                 <motion.div
@@ -765,7 +726,6 @@ function Step2interview({ interviewData, user }) {
               )}
             </AnimatePresence>
 
-            {/* Submit */}
             <div className="mt-5 border-t border-gray-100 pt-4">
               <button
                 type="button"

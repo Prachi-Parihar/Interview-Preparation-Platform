@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import api from "../utils/api.js";
 import { motion } from "motion/react";
 import {
@@ -8,74 +10,55 @@ import {
   FiArrowUpRight,
   FiActivity,
   FiBriefcase,
-  FiCheckCircle,
   FiMessageSquare,
   FiTrendingUp,
+  FiChevronDown,
 } from "react-icons/fi";
-import { getAllInterviews } from "../apis/interviewApi.js";
+import { fetchInterviews } from "../redux/interviewSlice.js";
 import Statbox from "../components/Statbox.jsx";
 import InterviewGraph from "../components/InterviewGraph.jsx";
 
 function Dashboard({ user, setUser }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
-  const [stats, setStats] = useState({
-    totalInterviews: 0,
-    totalQuestions: 0,
-    completed: 0,
-    averageScore: 0,
-  });
-
-  const [technicalData, setTechnicalData] = useState([]);
-  const [hrData, setHrData] = useState([]);
-  const [technicalCount, setTechnicalCount] = useState(0);
-  const [hrCount, setHrCount] = useState(0);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const {
+    stats,
+    technicalData,
+    hrData,
+    technicalCount,
+    hrCount,
+    loading,
+    error,
+  } = useSelector((state) => state.interview);
+
   const firstName = user?.name?.trim()?.split(/\s+/)[0] || "Developer";
+  const fullName = user?.name || "Developer";
+  const email = user?.email || "Email not available";
+  const initial = firstName.charAt(0).toUpperCase();
 
   useEffect(() => {
-    const fetchInterviews = async () => {
-      try {
-        const response = await getAllInterviews();
+    dispatch(fetchInterviews());
+  }, [dispatch]);
 
-        if (!response) return;
+const handleLogout = async () => {
+  try {
+    await api.get("/auth/logout");
+  } catch (error) {
+    console.error("Logout API error:", error);
+  } finally {
+    setUser(null);
+    navigate("/", { replace: true });
+  }
+};
 
-        setStats({
-          totalInterviews: response.stats?.totalInterviews || 0,
-          totalQuestions: response.stats?.totalQuestions || 0,
-          completed: response.stats?.completed || 0,
-          averageScore: response.stats?.averageScore || 0,
-        });
-
-        setTechnicalData(response.technicalData || []);
-        setHrData(response.hrData || []);
-        setTechnicalCount(response.technicalCount || 0);
-        setHrCount(response.hrCount || 0);
-      } catch (error) {
-        console.log("Fetch interviews error:", error);
-      }
-    };
-
-    fetchInterviews();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      const response = await api.get("/auth/logout");
-
-      if (response.data.success) {
-        setUser(null);
-        navigate("/");
-      }
-    } catch (error) {
-      console.log("Logout error:", error);
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-[#f7f7f8] font-sans text-gray-900">
+    <div className="min-h-screen bg-[#f7f8fa] font-sans text-gray-900">
       <Sidebar
         user={user}
         onNewInterview={() => navigate("/interview")}
@@ -90,13 +73,12 @@ function Dashboard({ user, setUser }) {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className={`min-h-screen px-4 py-5 sm:px-6 lg:px-8 lg:py-8 ${
+        className={`min-h-screen px-4 py-5 sm:px-6 lg:px-8 lg:py-7 ${
           sidebarOpen ? "md:ml-[260px]" : "md:ml-[72px]"
         }`}
       >
         <div className="mx-auto max-w-[1500px]">
-          {/* Header */}
-          <header className="mb-7 flex flex-wrap items-center justify-between gap-4">
+          <header className="mb-7 flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
@@ -109,30 +91,81 @@ function Dashboard({ user, setUser }) {
 
               <div>
                 <p className="mb-1 text-xs font-medium text-gray-500">
-                  Your workspace / Dashboard
+                  Your Workspace / Dashboard
                 </p>
-
                 <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
                   Dashboard
                 </h1>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => navigate("/interview")}
-              className="flex shrink-0 items-center gap-2 rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
-            >
-              New Interview
-              <FiArrowUpRight size={17} />
-            </button>
+            <div className="flex shrink-0 items-center gap-3">
+
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  aria-label="Open user profile"
+                  aria-expanded={profileOpen}
+                  className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition hover:border-gray-300 hover:shadow-md sm:gap-3 sm:px-3"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#a91b56] text-sm font-bold text-white">
+                    {initial}
+                  </div>
+
+                  <div className="hidden min-w-0 text-left sm:block">
+                    <p className="max-w-[150px] truncate text-sm font-semibold text-gray-900">
+                      {fullName}
+                    </p>
+                    <p className="max-w-[150px] truncate text-xs text-gray-500">
+                      {email}
+                    </p>
+                  </div>
+
+                  <FiChevronDown
+                    size={16}
+                    className="hidden text-gray-500 sm:block"
+                  />
+                </button>
+
+                {profileOpen && (
+                  <div className="absolute right-0 top-full z-50 mt-2 w-64 rounded-2xl border border-gray-200 bg-white p-4 shadow-xl">
+                    <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black font-bold text-white">
+                        {initial}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">
+                          {fullName}
+                        </p>
+                        <p className="break-all text-xs text-gray-500">
+                          {email}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProfileOpen(false);
+                        handleLogout();
+                      }}
+                      className="mt-3 w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </header>
 
-          {/* Welcome Section */}
-          <section className="mb-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-            <div className="flex flex-col justify-between gap-6 p-5 sm:p-7 lg:flex-row lg:items-center">
-              <div className="min-w-0">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600">
+          <section className="mb-5 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+            <div className="relative flex flex-col justify-between gap-6 p-4 sm:p-5 lg:flex-row lg:items-center">
+              <div className="pointer-events-none absolute -right-10 -top-20 h-64 w-64 rounded-full bg-gray-100/80 blur-3xl" />
+
+              <div className="relative min-w-0">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600">
                   <FiActivity size={14} />
                   Your Interview Workspace
                 </div>
@@ -141,61 +174,44 @@ function Dashboard({ user, setUser }) {
                   Welcome back, {firstName}!
                 </h2>
 
-                <p className="mt-2 max-w-xl text-sm leading-6 text-gray-500">
-                  Track your progress, review your performance, and
-                  build confidence with every interview you complete.
+                <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">
+                  Track your progress, improve your answers, and build
+                  confidence with every interview you complete.
                 </p>
 
                 <button
                   type="button"
                   onClick={() => navigate("/interview")}
-                  className="mt-5 inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800"
+                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
                 >
                   Start Practicing
-                  <FiArrowUpRight size={16} />
+                  <FiArrowUpRight size={17} />
                 </button>
-              </div>
-
-              <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-gray-50 p-4 sm:min-w-[220px]">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black text-lg font-bold text-white">
-                  {firstName.charAt(0).toUpperCase()}
-                </div>
-
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-gray-900">
-                    {user?.name || "Developer"}
-                  </p>
-
-                  <p className="mt-1 text-xs text-gray-500">
-                    Interview Prep
-                  </p>
-
-                  <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-gray-600">
-                    <span className="h-2 w-2 rounded-full bg-green-500" />
-                    Ready to practice
-                  </div>
-                </div>
               </div>
             </div>
           </section>
 
-          {/* Performance Overview */}
           <section className="mb-8">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold sm:text-xl">
                   Performance Overview
                 </h3>
-
                 <p className="mt-1 text-sm text-gray-500">
                   A quick look at your interview activity.
                 </p>
               </div>
 
-              <span className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-500">
+              <span className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-500">
                 All Time
               </span>
             </div>
+
+            {error && (
+              <p className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                {error}. Please refresh the page to try again.
+              </p>
+            )}
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <Statbox
@@ -230,41 +246,53 @@ function Dashboard({ user, setUser }) {
                 index={3}
               />
             </div>
+
+            {loading && (
+              <p className="mt-3 text-sm text-gray-500">
+                Updating interview statistics...
+              </p>
+            )}
           </section>
 
-          {/* Interview Types */}
           <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="group flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
               <div>
-                <p className="text-sm text-gray-500">Technical Interviews</p>
-                <p className="mt-2 text-2xl font-bold">{technicalCount}</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Technical Interviews
+                </p>
+                <p className="mt-2 text-3xl font-bold tracking-tight">
+                  {technicalCount}
+                </p>
                 <p className="mt-1 text-xs text-gray-400">
                   Technical practice sessions
                 </p>
               </div>
 
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-800">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-800 transition group-hover:bg-black group-hover:text-white">
                 <FiBriefcase size={22} />
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="group flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
               <div>
-                <p className="text-sm text-gray-500">HR Interviews</p>
-                <p className="mt-2 text-2xl font-bold">{hrCount}</p>
+                <p className="text-sm font-medium text-gray-500">
+                  HR Interviews
+                </p>
+                <p className="mt-2 text-3xl font-bold tracking-tight">
+                  {hrCount}
+                </p>
                 <p className="mt-1 text-xs text-gray-400">
                   Communication and HR practice
                 </p>
               </div>
 
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-800">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-800 transition group-hover:bg-black group-hover:text-white">
                 <FiMessageSquare size={22} />
               </div>
             </div>
           </section>
 
-          {/* Interview Analytics */}
-          <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+          <section className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
             <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div>
                 <div className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-gray-400">
@@ -302,7 +330,6 @@ function Dashboard({ user, setUser }) {
             </div>
           </section>
 
-          {/* Footer */}
           <footer className="py-7 text-center text-xs text-gray-400">
             Keep practicing. Every interview is progress.
           </footer>

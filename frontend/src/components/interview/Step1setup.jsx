@@ -135,8 +135,8 @@ function Step1setup({ user }) {
       </nav>
 
       {/* Main Content */}
-      <div className="px-4 py-8 sm:px-6 lg:py-12">
-        <div className="mx-auto max-w-5xl">
+      <div className="px-4 py-5 sm:px-6 lg:py-4">
+        <div className="mx-auto max-w-3xl">
 
           {/* Main Card */}
           <motion.div
@@ -146,34 +146,34 @@ function Step1setup({ user }) {
             className="grid overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm lg:grid-cols-[0.85fr_1.15fr]"
           >
             {/* Left Section */}
-            <div className="flex flex-col border-b border-gray-200 bg-gray-50 p-6 sm:p-8 lg:border-b-0 lg:border-r">
+            <div className="flex flex-col border-b border-gray-200 bg-gray-50 p-3 sm:p-8 lg:border-b-0 lg:border-r">
               <div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black text-white">
                   <FiBriefcase size={22} />
                 </div>
 
-                <h1 className="mt-5 text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">
+                <h1 className="mt-3 text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">
                   Welcome back,
                   <span className="mt-1 block break-words">
                     {user?.name || "Candidate"}
                   </span>
                 </h1>
 
-                <p className="mt-3 text-sm leading-6 text-gray-500">
+                <p className="mt-2 text-sm leading-6 text-gray-500">
                   Practice realistic AI interviews, receive instant
                   feedback, and improve your skills before your next
                   job interview.
                 </p>
               </div>
 
-              <div className="mt-8 space-y-4">
+              <div className="mt-3 space-y-4">
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                   What you'll get
                 </h2>
 
                 {features.map((item) => (
                   <div key={item} className="flex items-center gap-3">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black text-white">
+                    <div className="flex h-4 w-5 shrink-0 items-center justify-center rounded-full bg-black text-white">
                       <FiCheck size={14} />
                     </div>
 
@@ -182,7 +182,7 @@ function Step1setup({ user }) {
                 ))}
               </div>
 
-              <div className="mt-8 rounded-xl border border-gray-200 bg-white p-4">
+              <div className="mt-6 rounded-xl border border-gray-200 bg-white p-3">
                 <p className="text-sm font-semibold text-gray-900">
                   Ready to practice?
                 </p>
@@ -194,7 +194,7 @@ function Step1setup({ user }) {
             </div>
 
             {/* Right Section */}
-            <div className="p-6 sm:p-8">
+            <div className="p-4 sm:p-6">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
                   Start Interview
@@ -205,7 +205,7 @@ function Step1setup({ user }) {
                 </p>
               </div>
 
-              <div className="mt-7 space-y-6">
+              <div className="mt-5 space-y-5">
                 {/* Target Role */}
                 <div>
                   <label
@@ -217,7 +217,7 @@ function Step1setup({ user }) {
 
                   <div className="relative">
                     <FiBriefcase
-                      size={17}
+                      size={16}
                       className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
                     />
 
@@ -234,7 +234,7 @@ function Step1setup({ user }) {
 
                 {/* Interview Type */}
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
                     Interview Type
                   </label>
 
@@ -244,7 +244,7 @@ function Step1setup({ user }) {
                         key={item}
                         type="button"
                         onClick={() => setType(item)}
-                        className={`flex h-11 items-center justify-center gap-2 rounded-xl border text-sm font-medium transition ${
+                        className={`flex h-8 items-center justify-center gap-2 rounded-xl border text-sm font-medium transition ${
                           type === item
                             ? "border-black bg-black text-white"
                             : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
@@ -258,7 +258,7 @@ function Step1setup({ user }) {
                 </div>
 
                 {/* Resume Toggle */}
-                <div className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 p-4">
+                <div className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 p-2">
                   <div>
                     <h3 className="text-sm font-semibold text-gray-900">
                       Use Resume
@@ -289,12 +289,12 @@ function Step1setup({ user }) {
 
                 {/* Resume Upload */}
                 {useResume && (
-                  <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-5">
+                  <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4">
                     <label
                       htmlFor="resumeFile"
                       className="flex cursor-pointer flex-col items-center text-center"
                     >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-gray-800 shadow-sm">
+                      <div className="flex h-10 w-12 items-center justify-center rounded-xl bg-white text-gray-800 shadow-sm">
                         <FiUploadCloud size={23} />
                       </div>
 

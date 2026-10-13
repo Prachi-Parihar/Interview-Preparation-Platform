@@ -1,3 +1,4 @@
+
 import api from "../utils/api.js";
 
 export const getCurrentUser = async () => {
@@ -5,10 +6,11 @@ export const getCurrentUser = async () => {
     const response = await api.get("/me");
     return response.data.user;
   } catch (error) {
-    console.error("Get Current User Error:", error);
-
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch current user"
+    console.error(
+      "Get Current User Error:",
+      error.response?.data?.message || error.message
     );
+
+    return null;
   }
 };

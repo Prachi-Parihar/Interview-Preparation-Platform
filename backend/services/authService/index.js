@@ -1,10 +1,8 @@
+import "dotenv/config";
 import express from "express"
-import dotenv from "dotenv"
 import { connectDB } from "./configs/db.js"
 import authRouter from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
-
-dotenv.config();
 
 await connectDB();
 

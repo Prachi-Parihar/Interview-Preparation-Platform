@@ -1,9 +1,8 @@
+import "dotenv/config";
 import express from "express"
-import dotenv from "dotenv"
 import { connectDB } from "./config/db.js";
 import interviewRouter from "./routes/interviewRoute.js";
 
-dotenv.config();
 connectDB();
 
 const app = express();
