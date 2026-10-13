@@ -1,0 +1,24 @@
+{
+  "name": "resumeservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@langchain/core": "^1.2.17",
+    "@langchain/groq": "^1.3.1",
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "mongoose": "^9.11.1",
+    "multer": "^2.4.0",
+    "nodemon": "^3.1.14",
+    "pdf-parse": "^2.4.5"
+  }
+}

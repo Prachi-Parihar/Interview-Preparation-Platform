@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "Instrument Sans", sans-serif;
+  background: white;
+  color: #15171a;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+.font-display {
+  font-family: "Bricolage Grotesque", sans-serif;
+}
