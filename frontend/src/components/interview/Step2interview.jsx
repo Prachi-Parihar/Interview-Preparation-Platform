@@ -731,7 +731,7 @@ function Step2interview({ interviewData, user }) {
                 type="button"
                 onClick={() => submit()}
                 disabled={loading || !answer.trim() || !interviewStarted}
-                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-black px-5 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40 sm:ml-auto sm:w-auto sm:min-w-40"
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#a02747] px-5 text-sm font-semibold text-white hover:bg-[#9e1d3f] disabled:cursor-not-allowed disabled:opacity-40 sm:ml-auto sm:w-auto sm:min-w-40"
               >
                 {loading ? (
                   <>

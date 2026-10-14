@@ -117,7 +117,7 @@ function Sidebar({
             if (isMobile) setMobileOpen(false);
           }}
           title={!expanded ? "Create Interview" : undefined}
-          className={`flex w-full items-center gap-2 rounded-xl bg-[#1b2029] py-3 text-sm font-semibold text-white transition hover:bg-[#ab2552] ${
+          className={`flex w-full items-center gap-2 rounded-xl bg-[#87214d] py-3 text-sm font-semibold text-white transition hover:bg-[#ab2551] ${
             expanded ? "justify-center px-2.5" : "justify-center px-0"
           }`}
         >

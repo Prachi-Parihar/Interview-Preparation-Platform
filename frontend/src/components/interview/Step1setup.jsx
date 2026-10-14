@@ -246,7 +246,7 @@ function Step1setup({ user }) {
                         onClick={() => setType(item)}
                         className={`flex h-8 items-center justify-center gap-2 rounded-xl border text-sm font-medium transition ${
                           type === item
-                            ? "border-black bg-black text-white"
+                            ? "border-black bg-[#9c2545] text-white"
                             : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                         }`}
                       >
@@ -276,7 +276,7 @@ function Step1setup({ user }) {
                     aria-label="Use resume"
                     onClick={() => setUseResume(!useResume)}
                     className={`relative h-6 w-11 shrink-0 rounded-full transition ${
-                      useResume ? "bg-black" : "bg-gray-300"
+                      useResume ? "bg-[#9c2545]" : "bg-gray-300"
                     }`}
                   >
                     <span
@@ -365,7 +365,7 @@ function Step1setup({ user }) {
                   uploading ||
                   (useResume && !resume)
                 }
-                className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-black text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+                className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#9c2545] text-sm font-semibold text-white transition hover:bg-[#8f323a] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {starting ? (
                   "Starting Interview..."

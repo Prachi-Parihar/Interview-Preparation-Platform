@@ -118,7 +118,7 @@ function ResumeUpload({
         type="button"
         onClick={onUpload}
         disabled={!file || loading}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#87214d] px-5 py-3 font-medium text-white transition hover:bg-[#621536] disabled:cursor-not-allowed disabled:bg-gray-400"
       >
         <FiUploadCloud size={18} />
         {loading ? "Analyzing Resume..." : "Upload & Analyze"}

@@ -10,7 +10,7 @@ function Statbox({ label, value, sub, subHighlight, index = 0 }) {
       transition={{ duration: 0.4, delay: index * 0.08 }}
 
       whileHover={{ y: -4 }}
-    className='relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-xl p-3 md:p-4 flex flex-col gap-1 shadow-[0_8px_32px_rgba(0,0,0,0.18)] hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition-all'>
+    className='relative overflow-hidden bg-[#87214d] backdrop-blur-2xl border border-white/10 rounded-xl p-3 md:p-4 flex flex-col gap-1 shadow-[0_8px_32px_rgba(0,0,0,0.18)] hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition-all'>
 
         <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none'/>
 

@@ -263,7 +263,7 @@ function Roadmap() {
               onClick={() => setUseResume(!useResume)}
               className={`flex h-10 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium transition sm:text-sm ${
                 useResume
-                  ? "border-gray-900 bg-gray-900 text-white"
+                  ? "border-gray-900 bg-[#b31c58] text-white"
                   : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -276,7 +276,7 @@ function Roadmap() {
               type="button"
               disabled={loading || !role.trim()}
               onClick={handleGenerate}
-              className="flex h-10 items-center justify-center gap-2 rounded-lg bg-gray-900 px-3 text-xs font-semibold text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4 sm:text-sm"
+              className="flex h-10 items-center justify-center gap-2 rounded-lg bg-[#751248] px-3 text-xs font-semibold text-white transition hover:bg-[#560933] disabled:cursor-not-allowed disabled:opacity-40 sm:px-4 sm:text-sm"
             >
               {loading ? (
                 <>

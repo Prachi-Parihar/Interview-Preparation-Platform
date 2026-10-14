@@ -171,7 +171,7 @@ const handleLogout = async () => {
                 </div>
 
                 <h2 className="break-words text-2xl font-bold tracking-tight sm:text-3xl">
-                  Welcome back, {firstName}!
+                  Welcome back, <span className="text-[#9c2545]">{firstName}!</span>
                 </h2>
 
                 <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">
@@ -182,7 +182,7 @@ const handleLogout = async () => {
                 <button
                   type="button"
                   onClick={() => navigate("/interview")}
-                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#abadb1] px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
                 >
                   Start Practicing
                   <FiArrowUpRight size={17} />
