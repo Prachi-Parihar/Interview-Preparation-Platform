@@ -18,6 +18,7 @@
     "@langchain/langgraph": "^1.4.21",
     "dotenv": "^18.0.7",
     "express": "^5.3.0",
+    "ioredis": "^6.0.0",
     "mongoose": "^9.11.1",
     "nodemon": "^3.1.14"
   }
