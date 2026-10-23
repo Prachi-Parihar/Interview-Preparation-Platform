@@ -99,7 +99,7 @@ function Dashboard({ user, setUser }) {
               </div>
             </div>
 
-            {/* Profile menu: only Sign out */}
+            {/* Single profile button and single dropdown */}
             <div className="relative shrink-0">
               <button
                 type="button"
@@ -122,14 +122,14 @@ function Dashboard({ user, setUser }) {
                     onClick={() => setProfileOpen(false)}
                   />
 
-                  <div className="absolute right-0 top-full z-50 mt-2 w-36 rounded-xl border border-gray-200 bg-white p-2 shadow-xl">
+                  <div className="absolute right-0 top-full z-50 mt-2 w-32 rounded-lg border border-gray-200 bg-white p-1 shadow-lg">
                     <button
                       type="button"
                       onClick={() => {
                         setProfileOpen(false);
                         handleLogout();
                       }}
-                      className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 focus:outline-none focus:bg-red-50"
+                      className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
                     >
                       Sign out
                     </button>
