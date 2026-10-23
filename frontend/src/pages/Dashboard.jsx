@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import { useNavigate } from "react-router-dom";
@@ -12,8 +11,8 @@ import {
   FiBriefcase,
   FiMessageSquare,
   FiTrendingUp,
-  FiChevronDown,
 } from "react-icons/fi";
+
 import { fetchInterviews } from "../redux/interviewSlice.js";
 import Statbox from "../components/Statbox.jsx";
 import InterviewGraph from "../components/InterviewGraph.jsx";
@@ -36,26 +35,25 @@ function Dashboard({ user, setUser }) {
     error,
   } = useSelector((state) => state.interview);
 
-  const firstName = user?.name?.trim()?.split(/\s+/)[0] || "Developer";
-  const fullName = user?.name || "Developer";
-  const email = user?.email || "Email not available";
+  const firstName =
+    user?.name?.trim()?.split(/\s+/)[0] || "Developer";
+
   const initial = firstName.charAt(0).toUpperCase();
 
   useEffect(() => {
     dispatch(fetchInterviews());
   }, [dispatch]);
 
-const handleLogout = async () => {
-  try {
-    await api.get("/auth/logout");
-  } catch (error) {
-    console.error("Logout API error:", error);
-  } finally {
-    setUser(null);
-    navigate("/", { replace: true });
-  }
-};
-
+  const handleLogout = async () => {
+    try {
+      await api.get("/auth/logout");
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      setUser(null);
+      navigate("/", { replace: true });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#f7f8fa] font-sans text-gray-900">
@@ -78,6 +76,7 @@ const handleLogout = async () => {
         }`}
       >
         <div className="mx-auto max-w-[1500px]">
+          {/* Header */}
           <header className="mb-7 flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-3">
               <button
@@ -93,73 +92,54 @@ const handleLogout = async () => {
                 <p className="mb-1 text-xs font-medium text-gray-500">
                   Your Workspace / Dashboard
                 </p>
+
                 <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
                   Dashboard
                 </h1>
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-3">
+            {/* Profile menu: only Sign out */}
+            <div className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() =>
+                  setProfileOpen((prev) => !prev)
+                }
+                aria-label="Open profile menu"
+                aria-expanded={profileOpen}
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-[#a91b56] text-sm font-bold text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#a91b56] focus:ring-offset-2"
+              >
+                {initial}
+              </button>
 
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setProfileOpen(!profileOpen)}
-                  aria-label="Open user profile"
-                  aria-expanded={profileOpen}
-                  className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition hover:border-gray-300 hover:shadow-md sm:gap-3 sm:px-3"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#a91b56] text-sm font-bold text-white">
-                    {initial}
-                  </div>
-
-                  <div className="hidden min-w-0 text-left sm:block">
-                    <p className="max-w-[150px] truncate text-sm font-semibold text-gray-900">
-                      {fullName}
-                    </p>
-                    <p className="max-w-[150px] truncate text-xs text-gray-500">
-                      {email}
-                    </p>
-                  </div>
-
-                  <FiChevronDown
-                    size={16}
-                    className="hidden text-gray-500 sm:block"
+              {profileOpen && (
+                <>
+                  <button
+                    type="button"
+                    aria-label="Close profile menu"
+                    className="fixed inset-0 z-40 cursor-default"
+                    onClick={() => setProfileOpen(false)}
                   />
-                </button>
 
-                {profileOpen && (
-                  <div className="absolute right-0 top-full z-50 mt-2 w-64 rounded-2xl border border-gray-200 bg-white p-4 shadow-xl">
-                    <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black font-bold text-white">
-                        {initial}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold">
-                          {fullName}
-                        </p>
-                        <p className="break-all text-xs text-gray-500">
-                          {email}
-                        </p>
-                      </div>
-                    </div>
-
+                  <div className="absolute right-0 top-full z-50 mt-2 w-36 rounded-xl border border-gray-200 bg-white p-2 shadow-xl">
                     <button
                       type="button"
                       onClick={() => {
                         setProfileOpen(false);
                         handleLogout();
                       }}
-                      className="mt-3 w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
+                      className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 focus:outline-none focus:bg-red-50"
                     >
                       Sign out
                     </button>
                   </div>
-                )}
-              </div>
+                </>
+              )}
             </div>
           </header>
 
+          {/* Welcome section */}
           <section className="mb-5 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
             <div className="relative flex flex-col justify-between gap-6 p-4 sm:p-5 lg:flex-row lg:items-center">
               <div className="pointer-events-none absolute -right-10 -top-20 h-64 w-64 rounded-full bg-gray-100/80 blur-3xl" />
@@ -171,7 +151,10 @@ const handleLogout = async () => {
                 </div>
 
                 <h2 className="break-words text-2xl font-bold tracking-tight sm:text-3xl">
-                  Welcome back, <span className="text-[#9c2545]">{firstName}!</span>
+                  Welcome back,{" "}
+                  <span className="text-[#9c2545]">
+                    {firstName}!
+                  </span>
                 </h2>
 
                 <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">
@@ -191,12 +174,14 @@ const handleLogout = async () => {
             </div>
           </section>
 
+          {/* Performance overview */}
           <section className="mb-8">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold sm:text-xl">
                   Performance Overview
                 </h3>
+
                 <p className="mt-1 text-sm text-gray-500">
                   A quick look at your interview activity.
                 </p>
@@ -254,15 +239,18 @@ const handleLogout = async () => {
             )}
           </section>
 
+          {/* Interview counts */}
           <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="group flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
               <div>
                 <p className="text-sm font-medium text-gray-500">
                   Technical Interviews
                 </p>
+
                 <p className="mt-2 text-3xl font-bold tracking-tight">
                   {technicalCount}
                 </p>
+
                 <p className="mt-1 text-xs text-gray-400">
                   Technical practice sessions
                 </p>
@@ -278,9 +266,11 @@ const handleLogout = async () => {
                 <p className="text-sm font-medium text-gray-500">
                   HR Interviews
                 </p>
+
                 <p className="mt-2 text-3xl font-bold tracking-tight">
                   {hrCount}
                 </p>
+
                 <p className="mt-1 text-xs text-gray-400">
                   Communication and HR practice
                 </p>
@@ -292,6 +282,7 @@ const handleLogout = async () => {
             </div>
           </section>
 
+          {/* Interview analytics */}
           <section className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
             <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div>
@@ -330,6 +321,7 @@ const handleLogout = async () => {
             </div>
           </section>
 
+          {/* Footer */}
           <footer className="py-7 text-center text-xs text-gray-400">
             Keep practicing. Every interview is progress.
           </footer>

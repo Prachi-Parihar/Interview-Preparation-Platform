@@ -135,7 +135,7 @@ function Scorer() {
                 AI Resume Analyzer
               </p>
 
-              <h1 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              <h1 className="mt-5 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                 Improve Your Resume
               </h1>
 

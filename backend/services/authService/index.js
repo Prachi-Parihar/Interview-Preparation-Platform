@@ -1,10 +1,10 @@
 import "dotenv/config";
 import express from "express"
-import { connectDB } from "./configs/db.js"
+import { connectToMongoDB } from "./configs/db.js"
 import authRouter from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
 
-await connectDB();
+await connectToMongoDB();
 
 const app = express();
 
