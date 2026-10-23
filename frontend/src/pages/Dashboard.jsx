@@ -99,20 +99,35 @@ function Dashboard({ user, setUser }) {
               </div>
             </div>
 
-            {/* Single profile button and single dropdown */}
+            {/* Profile: icon, name, email and one Sign out dropdown */}
             <div className="relative shrink-0">
               <button
                 type="button"
                 onClick={() =>
                   setProfileOpen((prev) => !prev)
                 }
-                aria-label="Open profile menu"
+                aria-label="Toggle profile menu"
                 aria-expanded={profileOpen}
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-[#a91b56] text-sm font-bold text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#a91b56] focus:ring-offset-2"
+                className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#a91b56] focus:ring-offset-2"
               >
-                {initial}
+                {/* Profile icon */}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#a91b56] text-sm font-bold text-white">
+                  {initial}
+                </div>
+
+                {/* Name and email visible beside the icon */}
+                <div className="hidden min-w-0 text-left sm:block">
+                  <p className="max-w-[160px] truncate text-sm font-semibold text-gray-900">
+                    {user?.name || "Developer"}
+                  </p>
+
+                  <p className="max-w-[180px] truncate text-xs text-gray-500">
+                    {user?.email || "Email not available"}
+                  </p>
+                </div>
               </button>
 
+              {/* Dropdown contains only Sign out */}
               {profileOpen && (
                 <>
                   <button
@@ -122,14 +137,14 @@ function Dashboard({ user, setUser }) {
                     onClick={() => setProfileOpen(false)}
                   />
 
-                  <div className="absolute right-0 top-full z-50 mt-2 w-32 rounded-lg border border-gray-200 bg-white p-1 shadow-lg">
+                  <div className="absolute right-0 top-full z-50 mt-2 w-40 rounded-xl border border-gray-200 bg-white p-2 shadow-lg">
                     <button
                       type="button"
                       onClick={() => {
                         setProfileOpen(false);
                         handleLogout();
                       }}
-                      className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
+                      className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
                     >
                       Sign out
                     </button>
