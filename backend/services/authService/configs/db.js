@@ -1,18 +1,16 @@
-import { MongoClient } from 'mongodb';
 
-const client = new MongoClient(process.env.MONGODB_URI);
+import mongoose from "mongoose";
 
 export async function connectToMongoDB() {
   try {
-    await client.connect();
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log("You successfully connected to MongoDB!");
-    return client;
   } catch (err) {
-    console.dir(err);
+    console.error("MongoDB connection failed:", err);
+    throw err;
   }
 }
 
-// Call this only when your application terminates
 export async function disconnectFromMongoDB() {
-  await client.close();
+  await mongoose.disconnect();
 }

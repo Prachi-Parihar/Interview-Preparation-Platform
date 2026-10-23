@@ -10,8 +10,8 @@ const SESSION_TTL = 7 * 24 * 60 * 60;
 
 const cookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "lax",
+  secure: true,
+  sameSite: "none",
   path: "/",
   maxAge: SESSION_TTL * 1000,
 };
@@ -81,8 +81,8 @@ export const Logout = async (req, res) => {
 
     res.clearCookie(SESSION_COOKIE, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       path: "/",
     });
 

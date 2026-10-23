@@ -14,7 +14,7 @@ const LoginModel = ({ onClose, setUser }) => {
 
       const token = await result.user.getIdToken();
 
-      const response = await api.post("/auth/login", { token });
+      const response = await api.post("/auth/login", { token },{withCredentials: true});
 
       setUser(response.data.user);
 
